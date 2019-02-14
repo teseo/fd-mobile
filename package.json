@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "tsc": "tsc"
   },
   "dependencies": {
     "react": "16.6.3",
@@ -29,17 +30,22 @@
     "moduleFileExtensions": [
       "ts",
       "tsx",
-      "js"
+      "js",
+      "jsx",
+      "json",
+      "node"
     ],
     "transform": {
-      "^.+\\.(js)$": "<rootDir>/node_modules/babel-jest",
-      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "testPathIgnorePatterns": [
       "\\.snap$",
       "<rootDir>/node_modules/"
     ],
-    "cacheDirectory": ".jest/cache"
+    "cacheDirectory": ".jest/cache",
+    "modulePaths": [
+      "<rootDir>"
+    ]
   }
 }
