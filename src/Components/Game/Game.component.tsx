@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components/native";
 import CounterPanel from "../CounterPanel";
 import PlayerCard from "../PlayerCard";
-import * as players from "./Data/players";
+import players from "./Data/players";
 
 const MAX_SCORE = 10;
 const GameContainer = styled.ScrollView`
