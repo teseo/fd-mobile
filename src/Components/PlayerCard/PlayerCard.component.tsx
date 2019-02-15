@@ -2,6 +2,10 @@ import React from "react";
 
 import styled from "styled-components/native";
 
+const SUCCESSFUL_GUESS = 1;
+const FAILED_GUESS = 2;
+const PENDING_GUESS = 3;
+
 const PlayerCardContainer = styled.TouchableOpacity`
   background-color: forestgreen;
   flex-direction: row;
@@ -28,20 +32,30 @@ type MyProps = {
   firstName: string;
   lastName: string;
   isWinner: boolean;
-  handlePress: () => void;
+  ffpg: number;
+  handelPlayerPress: () => void;
+  showResult: boolean;
+  guessRight: number;
 };
 export default class PlayerCard extends React.Component<MyProps, {}> {
 
   render() {
     const name = this.props.firstName + ' ' + this.props.lastName;
+    const showResult = this.props.showResult;
+    const guessRight = this.props.guessRight;
+    console.log(guessRight);
     return (
       <PlayerCardContainer>
-        <PlayerDataContainer onPress={this.props.handlePress}>
+        <PlayerDataContainer onPress={this.props.handelPlayerPress}>
           <PlayerImage
             source={this.props.imageSource}
           />
           <TextName>Name: {name}</TextName>
-          <TextName>Winner: {this.props.isWinner ? "true": "false"}</TextName>
+          {showResult
+          &&
+          <TextName>FFPG: {this.props.ffpg.toPrecision(10)}</TextName>
+          }
+
 
         </PlayerDataContainer>
       </PlayerCardContainer>
