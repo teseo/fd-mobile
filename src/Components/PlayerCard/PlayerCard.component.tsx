@@ -28,7 +28,7 @@ const PlayerImage = styled.Image`
 `;
 
 type MyProps = {
-  imageSource: url;
+  imageSource: any;
   firstName: string;
   lastName: string;
   isWinner: boolean;
@@ -43,7 +43,7 @@ export default class PlayerCard extends React.Component<MyProps, {}> {
     const name = this.props.firstName + ' ' + this.props.lastName;
     const showResult = this.props.showResult;
     const guessRight = this.props.guessRight;
-    console.log(guessRight);
+    const ffpg = this.props.ffpg;
     return (
       <PlayerCardContainer>
         <PlayerDataContainer onPress={this.props.handelPlayerPress}>
@@ -52,8 +52,8 @@ export default class PlayerCard extends React.Component<MyProps, {}> {
           />
           <TextName>Name: {name}</TextName>
           {showResult
-          &&
-          <TextName>FFPG: {this.props.ffpg.toPrecision(10)}</TextName>
+          && ffpg &&
+          <TextName>FFPG: {ffpg.toPrecision(10)}</TextName>
           }
 
 

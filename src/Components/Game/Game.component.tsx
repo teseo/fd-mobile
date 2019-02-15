@@ -3,12 +3,8 @@ import React from "react";
 import styled from "styled-components/native";
 import CounterPanel from "../CounterPanel";
 import PlayerCard from "../PlayerCard";
-import players from "./Data/players";
-
-const MAX_SCORE = 10;
-const SUCCESSFUL_GUESS = 1;
-const FAILED_GUESS = 2;
-const PENDING_GUESS = 3;
+import {FAILED_GUESS, MAX_SCORE, PENDING_GUESS, SUCCESSFUL_GUESS} from "../../constants";
+import ApiService from "../../utils";
 
 const GameContainer = styled.ScrollView`
   padding: 20px;
@@ -19,15 +15,16 @@ const GameContainer = styled.ScrollView`
 
 const HeaderContainer = styled.View`
   align-items: center;
-  margin: 5px 10px 5px 10px;
+  margin: 0 5px 5px 0;
   background-color: greenyellow;
-  height: 100;
+  height: 100px;
   justify-content: center;  
-  border-radius: 16;
+  border-radius: 16px;
 `;
 const HeaderText = styled.Text`
+  margin-top: 5px;
   font-size: 18px;
-  height: 44px;
+  height: 43px;
 `;
 
 const PlayersCardContainer = styled.View`
@@ -43,13 +40,21 @@ const BottomContainer = styled.View`
   margin-bottom: 30px;
 `;
 
+const RestartButtonContainer = styled.View`
+  flex-direction: column;
+  background-color: coral;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+`;
+
 
 const ContinueButtonContainer = styled.TouchableOpacity`
   background-color: yellow;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  border-radius: 12;
+  border-radius: 12px;
   padding: 5px;
   margin-bottom: 5px;
 `;
@@ -61,10 +66,27 @@ const ButtonText = styled.Text``;
 
 type MyState = {
   score: number;
-  players: array;
+  players: Array<Player>;
+  playersRaw: Array<Player>;
   showResult: boolean;
   guessRight: number;
+  gameOver: boolean;
 };
+type DefaultImageData = {
+  height: number;
+  url: string;
+  width: number;
+}
+type ImageData = {
+  default: DefaultImageData
+};
+
+type Player = {
+  first_name: string;
+  last_name: string;
+  fppg: number;
+  images: ImageData
+}
 export default class Game extends React.Component<{}, MyState> {
 
   constructor(props: {}) {
@@ -72,32 +94,59 @@ export default class Game extends React.Component<{}, MyState> {
     this.state = {
       score: 0,
       showResult: false,
-      players: players,
+      gameOver: false,
+      players: [],
+      playersRaw: [],
       guessRight: PENDING_GUESS
     };
   }
 
-  handelPlayerPress(playersToPlay: array, playerOne: object, playerTwo: object, isWinner: bool): void {
-
-    this.setState({
-      //...this.state,
-      showResult: true,
-      guessRight: isWinner ? SUCCESSFUL_GUESS : FAILED_GUESS
-    });
-
+  componentDidMount(): void {
+    this.loadPlayers();
   }
 
-  handleContinuePress(playersToPlay: array) {
+  loadPlayers = async (): Promise<void> => {
+    if (this.state.playersRaw.length === 0) {
+      const players = await ApiService.getPlayers();
+      this.setState({
+        ...this.state,
+        players: players,
+        playersRaw: players
+      });
+    }
 
+  };
+
+  handelPlayerPress(playersToPlay: Array<Player>, playerOne: Player, playerTwo: Player, isWinner: Boolean): void {
+    if (this.state.guessRight == PENDING_GUESS) {
+      this.setState({
+        showResult: true,
+        guessRight: isWinner ? SUCCESSFUL_GUESS : FAILED_GUESS
+      });
+    }
+  }
+
+  handleContinuePress(playersToPlay: Array<Player>) {
+    let score = this.state.guessRight == SUCCESSFUL_GUESS ? this.state.score + 1 : this.state.score;
     this.setState({
       ...this.state,
-      score: this.state.guessRight == SUCCESSFUL_GUESS ? this.state.score + 1 : this.state.score,
+      score: score,
+      gameOver: score === MAX_SCORE,
       showResult: false,
       players: playersToPlay,
       guessRight: PENDING_GUESS
     });
+  }
 
+  handleRestartGamePress() {
 
+    this.setState({
+      score: 0,
+      showResult: false,
+      players: this.state.playersRaw,
+      gameOver: false,
+      guessRight: PENDING_GUESS
+    });
   }
 
   render() {
@@ -115,7 +164,7 @@ export default class Game extends React.Component<{}, MyState> {
 
         <PlayersCardContainer>
 
-          {score < MAX_SCORE && (playerOne && playerTwo) && <PlayerCard
+          {score < MAX_SCORE && playerOne && playerTwo && <PlayerCard
               firstName={playerOne.first_name}
               lastName={playerOne.last_name}
               imageSource={{uri: playerOne.images.default.url}}
@@ -125,7 +174,7 @@ export default class Game extends React.Component<{}, MyState> {
               guessRight={this.state.guessRight}
               handelPlayerPress={() => this.handelPlayerPress(playersToPlay, playerOne, playerTwo, playerOne.fppg > playerTwo.fppg)}
           />}
-          {score < MAX_SCORE && (playerOne && playerTwo) && <PlayerCard
+          {score < MAX_SCORE && playerOne && playerTwo && <PlayerCard
               firstName={playerTwo.first_name}
               lastName={playerTwo.last_name}
               imageSource={{uri: playerTwo.images.default.url}}
@@ -137,20 +186,28 @@ export default class Game extends React.Component<{}, MyState> {
 
           />}
           {!playerOne || !playerTwo &&
-            <HeaderText>You lost 😰 </HeaderText>
+          <HeaderText>You lost 😰 </HeaderText>
           }
           {score == MAX_SCORE &&
-            <HeaderText>You're a pro 😎! </HeaderText>
+          <HeaderText>You're a pro 😎! </HeaderText>
           }
         </PlayersCardContainer>
         {this.state.guessRight != PENDING_GUESS
-          &&
-          <BottomContainer>
-              <BottomText>{this.state.guessRight === SUCCESSFUL_GUESS ? "You won! " : "You lost"}</BottomText>
-              <ContinueButtonContainer onPress={() => this.handleContinuePress(playersToPlay)}>
-                  <ButtonText>Continue</ButtonText>
-              </ContinueButtonContainer>
-          </BottomContainer>
+        &&
+        <BottomContainer>
+            <BottomText>{this.state.guessRight === SUCCESSFUL_GUESS ? "Well done! " : "You missed this one!"}</BottomText>
+            <ContinueButtonContainer onPress={() => this.handleContinuePress(playersToPlay)}>
+                <ButtonText>Continue</ButtonText>
+            </ContinueButtonContainer>
+        </BottomContainer>
+        }
+        {this.state.gameOver
+        &&
+        <RestartButtonContainer>
+            <ContinueButtonContainer onPress={() => this.handleRestartGamePress()}>
+                <ButtonText>Restart Game</ButtonText>
+            </ContinueButtonContainer>
+        </RestartButtonContainer>
         }
       </GameContainer>
     );

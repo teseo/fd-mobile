@@ -1,7 +1,11 @@
 import React from "react";
 
 import styled from "styled-components/native";
-const CounterText = styled.Text`
+
+interface CounterTextProps {
+  inputColor: string
+}
+const CounterText = styled.Text<CounterTextProps>`
   color:${props => props.inputColor};
 `;
 
