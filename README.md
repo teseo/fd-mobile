@@ -1,9 +1,9 @@
-###Instructions
+### Instructions
 
 - Clone this repo
 - yarn start
 - react-native run-ios or react-native run-android
-##GIFS
+## GIFS
 
 | Android | iOS |
 | :---: | :---: |
@@ -14,19 +14,19 @@
 | :---: | :---: |
 | ![](gifs/androidHorizontal.gif) | ![](gifs/iosHorizontal.gif) |
 
-##Screenshots Vertical
+## Screenshots Vertical
 
 | Android | iOS |
 | :---: | :---: |
 | ![](screenshots/screenshotAndroidVertical.png) | ![](screenshots/screenshotiOSVertical.png)  |
 
-##Screenshots Horizontal
+## Screenshots Horizontal
 
 | Android | iOS |
 | :---: | :---: |
 | ![](screenshots/screenshotAndroidHorizontal.png) | ![](screenshots/screenshotiOSHorizontal.png)  |
 
-##Tests
+## Tests
 
 | Terminal 
 | :---:
