@@ -1,6 +1,7 @@
 ### Stack
 - Typescript
 - Styled components
+- Enzyme & Jest 
 
 ### Instructions
 
