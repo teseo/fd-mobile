@@ -1,3 +1,7 @@
+### Stack
+- Typescript
+- Styled components
+
 ### Instructions
 
 - Clone this repo
