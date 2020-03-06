@@ -60,3 +60,4 @@ buck-out/
 *.jsbundle
 
 .jest/
+.idea/
